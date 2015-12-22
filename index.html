@@ -1,0 +1,64 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>
+    </title>
+
+    <link rel="stylesheet" href="css/lib/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/lib/bootstrap-responsive.min.css"/>
+    <link rel="stylesheet" href="css/web-console.css"/>
+
+    <style>
+
+    </style>
+</head>
+<body>
+<div class="navbar navbar-fixed-top navbar-inverse">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="/index.html">
+                Home
+            </a>
+            <ul class="nav">
+                <li><a href="index.html">Full Implementation</a> </li>
+                <li><a href="console.html">Console Module</a> </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container">
+
+
+    <div class="web-console"></div>
+
+    <div class="ws-config">
+        <div class="row-fluid">
+            <div class="span6 socket-config ">
+
+                <label>
+                    On Socket:
+                </label>
+                <select id="uri-options">
+                    <option>wss://echo.websocket.org</option>
+                    <option>ws://dev.maxbilbow.com:8080/debug-server/updates</option>
+                </select>
+            </div>
+
+            <div class="span6 debug-level">
+                <label>Debug Level</label>
+                <input type="radio" name="debug-level" value="debug-info">Info
+                <input type="radio" name="debug-level" value="debug-warning" checked>Warn
+                <input type="radio" name="debug-level" value="debug-error">Error
+                <input type="radio" name="debug-level" value="debug-none">None
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<script data-main="js/web-socket-console" src="js/lib/require.min.js"></script>
+</body>
+</html>

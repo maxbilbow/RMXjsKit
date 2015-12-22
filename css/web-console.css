@@ -1,0 +1,25 @@
+.wc-output {
+    min-height: 200px;
+    max-height: 400px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+    background-color: #000000;
+    color: #ffffff;
+    padding: 5px;
+    font-size: 75%;
+    font-family: "Courier New";
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+#wc-output p {
+    line-height: 1;
+}
+
+#uri {
+    /*width: 100%;*/
+}
+#uri-options {
+    width: 100%;
+}
