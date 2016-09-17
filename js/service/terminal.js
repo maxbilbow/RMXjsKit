@@ -4,36 +4,38 @@
 define(['./pub-sub'],function ($ps) {
     var DefaultTerminal = function (webConsole) {
         var FN = 0, DESC = 1;
+
+
         /**
          *
          * @type {{echo: computers.echo}} returns true if the command was accepted
          */
         var computers = {
-            echo:[function(cmd,txt,terminal){
-                terminal.console.log(txt, 'ECHO: ');
+            echo:[function(cmd,txt){
+                webConsole.log(txt, 'ECHO: ');
                 return true;
             },'Echo command'],
-            help:[function(cmd,txt,terminal){
+            help:[function(cmd,txt){
                 var cmds = '\nClient-side Commands:';
                 var keys = Object.keys(computers);
                 for (var i=0;i<keys.length;++i)
-                    cmds += '\n   /' + keys[i] + ': ' + computers[keys[i]][DESC];
-                terminal.console.log(cmds,'HELP: ');
+                    cmds += '\n   ' + keys[i] + ': ' + computers[keys[i]][DESC];
+                webConsole.log(cmds,'HELP: ');
             },'Display available commands'],
-            func:[function(cmd,txt,terminal){
+            func:[function(cmd,txt){
                 var name = cmd[1];
                 var split = 2;
                 var desc = 'custom function';
                 var response = cmd.slice(split).join(' ');
-                terminal.console.log(txt, 'NEW FUNC: ');
-                computers[name] = [function (cmd,txt,terminal) {
+                webConsole.log(txt, 'NEW FUNC: ');
+                computers[name] = [function (cmd,txt) {
                     try {
-                        txt = new Function('args','text','$this',response)(cmd.splice(1),txt,terminal.console);
+                        txt = new Function('args','text',response)(cmd.splice(1),txt);
                     } catch (e) {
                         txt = response + ': ' + e;
                     }
                     if (txt)
-                        terminal.console.log(txt, cmd[0] + ': ');
+                        webConsole.log(txt, cmd[0] + ': ');
                     return true;
                 },desc];
                 return true;
@@ -43,24 +45,24 @@ define(['./pub-sub'],function ($ps) {
         };
 
         return {
-            cmdKey:'/',console: webConsole || document.console,
+            cmdKey:null,console: webConsole || document.console,
             /**
              *
              * @param cmd
              * @returns {boolean} true if a command was accepted
              */
             process: function (txt) { //Returns false if no command was received
-                if (txt) {
+                if (txt && txt !== "") {
                     if (this.expectsReply && this.onReply) {
                         this.expectsReply = false;
-                        this.onReply(txt, this); //process reply
+                        this.onReply.call(this,txt,this); //process reply
                         return true;
-                    } else if (txt[0] === this.cmdKey) {
-                        $ps.info('Received command: ' + cmd);
-                        var cmd = txt.substring(1).split(' ');
-                        var process = computers[cmd[0]];
+                    } else if (!this.cmdKey || txt[0] === this.cmdKey) {
+                        $ps.info('Received command: ' + txt);
+                        var cmd = (this.cmdKey ? txt.substring(this.cmdKey.length) : txt).split(' ');
+                        var process = computers[cmd[0].toLowerCase()];
                         if (process) {
-                            return process[FN](cmd, cmd.slice(1).join(' '), this);
+                            return process[FN].call(this,cmd, cmd.slice(1).join(' '));//, this);
                         } else {
                             return false;
                         }
@@ -75,7 +77,7 @@ define(['./pub-sub'],function ($ps) {
              * @param processor
              */
             onProcess: function (key,processor,desc) {
-                computers[key] = [processor, desc || 'new custom processor'];
+                computers[key.toLowerCase()] = [processor, desc || 'new custom processor'];
             },
             /**
              * this.expectsReply was set to false before this method is called.

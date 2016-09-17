@@ -170,12 +170,14 @@ function TestKit() {
 
 })();
 
+/**
 var test = new TestKit();
 test.setup(function () {
     this.persistent = true;
 }).teardown(function () {
     this.persistent = null;
 });
+
 
 test.before(function () {
     this.temp=1;
@@ -242,3 +244,5 @@ test.addTest('first', function () {
 }).run();
 
 // console.assert(1===2);
+
+    */

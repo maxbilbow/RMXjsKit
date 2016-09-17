@@ -1,6 +1,7 @@
 /**
  * Created by Max Bilbow on 23/11/2015.
  */
+
 define(['jquery', 'service/pub-sub','service/terminal'], function ($, ps, DefaultTerminal) {
     var webConsoles = [];
 
@@ -35,7 +36,7 @@ define(['jquery', 'service/pub-sub','service/terminal'], function ($, ps, Defaul
                     .append($(document.createElement('input'))
                         .addClass('span10').addClass('wc-message')
                         .css('float','left')
-                        .attr('type', 'text').val('/help')
+                        .attr('type', 'text').val('help')
                     )
                     .append($(document.createElement('span'))
                         .addClass('btn').addClass('btn-primary')
