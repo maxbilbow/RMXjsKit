@@ -5,7 +5,7 @@ require(['jquery', 'view/web-console', 'service/pub-sub'], function ($, $wc, $ps
 
     var console = $wc.getInstance();
     console.debugLevel = $ps.INFO;
-    $ps.info('SETUP SUCCESS');
+    $ps.info('Setting up...');
 
 
     $ps.sub($ps.LOG,function (aMessage) {
@@ -80,7 +80,7 @@ require(['jquery', 'view/web-console', 'service/pub-sub'], function ($, $wc, $ps
                 require(['view/ScreenItemBuilder'], function (Builder) {
                     // _builder = new Builder();
                     _builder = new Builder($,$ps);
-                    console.terminal.onProcess('build',function (cmd, txt, terminal) {
+                    console.terminal.onProcess('build',function (cmd, txt) {
                         var args = txt.split(',');
                         var data = {};
                         for (var i in args)
@@ -91,9 +91,17 @@ require(['jquery', 'view/web-console', 'service/pub-sub'], function ($, $wc, $ps
                                 data[pair[0].trim()] = pair[1].trim();
                             }
                         }
+                        $('')
                         $ps.log('Building: ',data);
                         _builder.build(data);
                     },'Builds an html element');
+                    _builder.build({id:'#build-zone',parent:'#main-container-wc', class: 'row', type:'div',
+                    subItems: [
+                        {type: 'div', class :'col-md-12', subItems: [{id: '#build-input',type:'textarea'}]},
+                        {type: 'div', class :'col-md-12', subItems: [{id: '#buildBtn',type: 'button', class :'btn btn-primary pull-right'}]},
+                        {id: '#build-output',type: 'div', class :['col-md-12'], html:'<h4>Stuff will appear below</h4>'}
+                    ]});
+                    _builder.defaultParent = '#build-output';
                     $ps.log('new Builder()',_builder);
                 });
 

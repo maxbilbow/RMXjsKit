@@ -45,53 +45,67 @@ function ScreenItemBuilder() {
 
     ScreenItemBuilder.prototype.items = {};
 
-    function makeItemData(aData) {
-        var screenItemData = {};
-        screenItemData.id = aData.id || '#screen-item-'+COUNT;
-        screenItemData.type = aData.type || 'div';
-        screenItemData.subItems = [];
+    function ItemData(aData) {
+        COUNT++;
+        this.id = aData.id || '#screen-item-'+COUNT;
+        this.type = aData.type || 'div';
+        this.subItems = [];
         if (aData.class)
         {
-            aData.classList = aData.class instanceof Array ? aData.class : aData.class.split(' ');
+            this.classList = aData.class instanceof Array ? aData.class : aData.class.split(' ');
         }
         else
         {
-            aData.classList = [];
+            this.classList = [];
         }
-        screenItemData.attr = aData.attr || {};
-        screenItemData.data = aData.data || {};
-        screenItemData.html = aData.html || '';
-       screenItemData.parent = aData.parent || this.defaultParent;
+        this.attr = aData.attr || {};
+        this.data = aData.data || {};
+        this.html = aData.html || '';
+
         if (aData.subItems)
         {
             for (var i in aData.subItems)
             {
-                screenItemData.subItems.push(makeItemData.call(this,aData.subItems[i]));
+                this.subItems.push(new ItemData(aData.subItems[i]));
             }
         }
-        return screenItemData
+
     }
 
     function construct(aScreenItemData) {
-        if ($ps) $ps.log('constructing...',aScreenItemData);
+        if ($ps) $ps.log('constructing...',aScreenItemData.type,aScreenItemData.id);
 
-        var item = $(document.createElement(aScreenItemData.type))
-            .attr('id',aScreenItemData.id)
-            .html(aScreenItemData.html);
+        var item = $(document.createElement(aScreenItemData.type));
 
-        for (var name in Object.keys(aScreenItemData.attr))
-        {
-            item.attr(name,aScreenItemData.attr[name]);
+        item.attr('id',aScreenItemData.id);
+
+        if (aScreenItemData.attr) {
+            for (var name in aScreenItemData.attr) {
+                item.attr(name, aScreenItemData.attr[name]);
+            }
         }
 
-        for (var name in Object.keys(aScreenItemData.data))
-        {
-            item.data(name,aScreenItemData.data[name]);
+        if (aScreenItemData.data) {
+            for (var name in aScreenItemData.data) {
+                item.data(name, aScreenItemData.data[name]);
+            }
         }
 
-        for (var i in aScreenItemData.subItems)
+        if (aScreenItemData.classList) {
+            for (var i in aScreenItemData.classList) {
+                item.addClass(aScreenItemData.classList[i]);
+            }
+        }
+
+        if (aScreenItemData.html)
         {
-            item.append(construct(aScreenItemData.subItems[i]))
+            item.html(aScreenItemData.html);
+        }
+
+        if (aScreenItemData.subItems) {
+            for (var i in aScreenItemData.subItems) {
+                item.append(construct(aScreenItemData.subItems[i]))
+            }
         }
 
         return item;
@@ -99,16 +113,18 @@ function ScreenItemBuilder() {
     }
 
     ScreenItemBuilder.prototype.build = function (aData) {
-        if ($ps) $ps.log('attempting to build from data',aData);
-        COUNT++;
-        var screenItemData = makeItemData.call(this,aData);
-        var item = this.items[screenItemData.id] = construct(screenItemData);
+        if ($ps) $ps.log('attempting to build from data');
+        var screenItemData = new ItemData(aData);
+        var parent = aData.parent || this.defaultParent;
+        this.items[screenItemData.id] = screenItemData;
         $(document).ready(function () {
-            if (screenItemData.parent instanceof jQuery) {
-                screenItemData.parent.append(item);
+            var item = construct(screenItemData);
+            if (parent instanceof jQuery) {
+                parent.append(item);
             }
             else {
-                $(screenItemData.parent).append(item);
+
+                $(parent).append(item);
             }
         });
     };

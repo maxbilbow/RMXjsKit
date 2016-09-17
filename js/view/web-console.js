@@ -25,6 +25,10 @@ define(['jquery', 'service/pub-sub','service/terminal'], function ($, ps, Defaul
                 .appendTo('body');
         }
 
+        if (!view.attr('id'))
+        {
+            view.attr('id','main-container-wc');
+        }
 
         view.addClass('hero-unit')
             .append(

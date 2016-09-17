@@ -43,11 +43,12 @@ function PubSub(){
             cache[id].args.push(args);
         }
 
-        for (var i = 0, il = cache[id].callbacks.length; i < il; i++) {
+        for (var i = 0; i < cache[id].callbacks.length; i++) {
             try {
                 cache[id].callbacks[i].apply(null, args);
             } catch (e) {
-                console.error(e);
+                Array.prototype.unshift(args,e);
+                console.error(args);
             }
         }
         return this;
@@ -90,25 +91,25 @@ function PubSub(){
     };
 
     PubSub.prototype.info = function () {
-        console.info.apply(PubSub.INFO,arguments);//(msg, e );
+        console.info(arguments);
         Array.prototype.unshift.call(arguments,PubSub.INFO);
         this.pub.apply(this, arguments);
     };
 
     PubSub.prototype.warn = function () {
-        console.warn.apply(PubSub.WARN, arguments);
+        console.warn(arguments);
         Array.prototype.unshift.call(arguments,PubSub.WARN);
         this.pub.apply( this, arguments);
     };
 
     PubSub.prototype.error = function () {
-        console.error.apply(PubSub.ERROR,arguments);
+        console.error(arguments);
         Array.prototype.unshift.call(arguments,PubSub.ERROR);
         this.pub.apply(this, arguments);
     };
 
     PubSub.prototype.log = function () {
-        console.log.apply(null, arguments);
+        console.log(arguments);
         Array.prototype.unshift.call(arguments,PubSub.LOG);
         this.pub.apply(this,arguments);
     };
